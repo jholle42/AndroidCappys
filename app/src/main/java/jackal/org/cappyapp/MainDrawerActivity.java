@@ -91,6 +91,15 @@ public class MainDrawerActivity extends AppCompatActivity
             case R.id.nav_events:
                 fragment = new eventPage();
                 break;
+            case R.id.smTwitter:
+                fragment = new twitterFeed();
+                break;
+            case R.id.smFacebook:
+                fragment = new facebookFeed();
+                break;
+            case R.id.smInstagram:
+                fragment = new instagramFeed();
+                break;
         }
 
         if (fragment != null) {

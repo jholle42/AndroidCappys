@@ -26,9 +26,17 @@
     <item android:title="Social Media">
         <menu>
             <item
-                android:id="@+id/facebook"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/smFacebook"
+                android:icon="@drawable/facebook"
+                android:title="Facebook" />
+            <item
+                android:id="@+id/smTwitter"
+                android:icon="@drawable/twitter"
+                android:title="Twitter" />
+            <item
+                android:id="@+id/smInstagram"
+                android:icon="@drawable/instagram"
+                android:title="Instagram" />
 
         </menu>
     </item>
