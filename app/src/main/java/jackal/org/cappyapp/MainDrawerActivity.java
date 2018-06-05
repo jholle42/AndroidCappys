@@ -14,8 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainDrawerActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+public class MainDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    firebaseDatabaseInteractor dbInteractor;
+    firebaseUser User;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
