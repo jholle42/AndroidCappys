@@ -5,6 +5,8 @@ import android.text.format.DateFormat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 ;
 
 /**
@@ -15,17 +17,18 @@ public class firebaseUser {
 
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private AppUser user;
 
-    //private FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-    //private DatabaseReference mInventoryDatabaseReference = mFirebaseDatabase.getReference();
-
-    private String mCurrentUser, uid, date_time;
-    private boolean accepted_terms = true;
-    private static final String ANONYMOUS = " ";
+    FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+    DatabaseReference mInventoryDatabaseReference = mFirebaseDatabase.getReference();
 
     // constructor for the Firebase Interactor class:
     public firebaseUser() {
 
+    }
+
+    public void setUser(AppUser user){
+        this.user = user;
     }
 
     public void attachFirebaseAuthListener() {
@@ -36,21 +39,12 @@ public class firebaseUser {
         // to do
     }
 
-    public String getCurrentUser() {
-        return mCurrentUser;
-    }
-
-    public  void userAcceptedTerms() {
-        accepted_terms = true;
+    public AppUser getCurrentUser() {
+        return user;
     }
 
     public void saveUserInformationToDatabase() {
 
-    }
-
-    private String getDateTime() {
-        date_time = (DateFormat.format("MM-dd-yyyy hh:mm:ss", new java.util.Date()).toString());
-        return date_time;
     }
 
 }

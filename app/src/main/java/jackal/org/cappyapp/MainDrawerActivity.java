@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -13,27 +14,50 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static java.lang.Boolean.FALSE;
 
 public class MainDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     firebaseDatabaseInteractor dbInteractor;
-    firebaseUser User;
+    Boolean isThereUser = FALSE;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private static final int RC_SIGN_IN = 123;
+    AppUser currentUser;
+    FirebaseUser fbUser;
+    NavigationView navigationView;
+    TextView username, userEmail;
+
+
+    List<AuthUI.IdpConfig> providers = Arrays.asList(
+            new AuthUI.IdpConfig.EmailBuilder().build());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
 
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivityForResult(i, 123);
+        //Intent i = new Intent(this, LoginActivity.class);
+        //startActivityForResult(i, 123);
 
         setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame,new mainPage());
+        transaction.replace(R.id.content_frame,new tapListPage());
         transaction.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -41,20 +65,47 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        navigationView = findViewById(R.id.nav_view);
+        username = navigationView.getHeaderView(0).findViewById(R.id.welcome_user);
+        userEmail = navigationView.getHeaderView(0).findViewById(R.id.user_email);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener(){
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user!=null){
+                    System.out.println("User logged in");
+                    Toast.makeText(MainDrawerActivity.this, "Signed In ",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    System.out.println("User not logged in");
+                    Toast.makeText(MainDrawerActivity.this, "Signed Out",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        mAuth.addAuthStateListener(mAuthListener);
+
+
+
     }
+
+
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,6 +123,22 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.sign_in) {
+
+            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),RC_SIGN_IN);
+            fbUser = FirebaseAuth.getInstance().getCurrentUser();
+            //fbUser = mAuth.getCurrentUser();
+             if(fbUser!= null) {
+                 setUser(fbUser);
+             }
+            return true;
+        }
+
+        if (id == R.id.sign_out) {
+            FirebaseAuth.getInstance().signOut();
+            AuthUI.getInstance().signOut(this);
             return true;
         }
 
@@ -122,4 +189,20 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
     }
 
+    public boolean isSignedIn(){
+        return isThereUser;
+    }
+
+    public void setUser(FirebaseUser fbU){
+        currentUser.setFullName(fbU.getDisplayName());
+        currentUser.setEmail(fbU.getEmail());
+        username.setText("Welcome to the Cappy's App " + currentUser.getFullName()+ "!");
+        userEmail.setText(currentUser.getEmail());
+    }
+
+
+
+
 }
+
+

@@ -2,6 +2,7 @@ package jackal.org.cappyapp;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * Created by jholle42 on 6/5/18.
@@ -11,6 +12,7 @@ public class firebaseDatabaseInteractor {
 
         private FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         private FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
+        private StorageReference storageRef = mFirebaseStorage.getReference();
 
         public firebaseDatabaseInteractor() { }
 
