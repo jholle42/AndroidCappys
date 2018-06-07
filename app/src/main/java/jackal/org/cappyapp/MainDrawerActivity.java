@@ -77,14 +77,24 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user!=null){
+                    mAuth = FirebaseAuth.getInstance();
+                    fbUser = mAuth.getCurrentUser();
+                    fbUser.getDisplayName();
+
+                    username.setText("Welcome to the Cappy's App " + fbUser.getDisplayName() + "!");
+                    userEmail.setText(fbUser.getEmail());
+
+
                     System.out.println("User logged in");
-                    Toast.makeText(MainDrawerActivity.this, "Signed In ",
+                    Toast.makeText(MainDrawerActivity.this, fbUser.getDisplayName() + " has Signed In!",
                             Toast.LENGTH_SHORT).show();
                 }
                 else{
                     System.out.println("User not logged in");
                     Toast.makeText(MainDrawerActivity.this, "Signed Out",
                             Toast.LENGTH_SHORT).show();
+                    username.setText("Welcome to the Cappy's App Guest!");
+                    userEmail.setText("");
                 }
             }
         };
@@ -196,8 +206,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
     public void setUser(FirebaseUser fbU){
         currentUser.setFullName(fbU.getDisplayName());
         currentUser.setEmail(fbU.getEmail());
-        username.setText("Welcome to the Cappy's App " + currentUser.getFullName()+ "!");
-        userEmail.setText(currentUser.getEmail());
     }
 
 
