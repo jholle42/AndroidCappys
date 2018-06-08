@@ -7,10 +7,8 @@ import android.os.Parcelable;
  * Created by jholle42 on 6/5/18.
  */
 
-public class AppUser{
+public class AppUser implements Parcelable{
 
-    private String firstName;
-    private String lastName;
     private String email;
     private String address;
     private String phoneNumber;
@@ -18,30 +16,38 @@ public class AppUser{
 
     public AppUser() {} // Empty Constructor required by Firebase
 
-    public AppUser(String firstName,String lastName,String email,String address,String phoneNumber) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public AppUser(String fullname, String email,String address,String phoneNumber) {
+        this.fullname = fullname;
         this.email = email;
         this.address = address;
         this.phoneNumber = phoneNumber;
 
     }
 
+    public AppUser(Parcel in) {
+        email = in.readString();
+        address = in.readString();
+        phoneNumber = in.readString();
+        fullname = in.readString();
+    }
+
+    public static final Creator<AppUser> CREATOR = new Creator<AppUser>() {
+        @Override
+        public AppUser createFromParcel(Parcel in) {
+            return new AppUser(in);
+        }
+
+        @Override
+        public AppUser[] newArray(int size) {
+            return new AppUser[size];
+        }
+    };
+
     public void resetUser(){
-        firstName = null;
-        fullname = null;
-        lastName = null;
-        email = null;
-        address = null;
-        phoneNumber = null;
-    }
-
-    public String getFirstName(){
-        return firstName;
-    }
-
-    public String getLastName(){
-        return lastName;
+        fullname = " ";
+        email = " ";
+        address = " ";
+        phoneNumber = " ";
     }
 
     public String getFullName() { return fullname;}
@@ -59,15 +65,6 @@ public class AppUser{
     }
 
 
-
-    public void setFirstName(String in){
-        firstName = in;
-    }
-
-    public void setLastName(String in){
-        lastName = in;
-    }
-
     public void setFullName(String in) { fullname = in;}
 
     public void setEmail(String in) {email = in;}
@@ -76,4 +73,18 @@ public class AppUser{
          address = in;
     }
 
+    public void setPhoneNumber(String in) { phoneNumber = in;}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(email);
+        parcel.writeString(address);
+        parcel.writeString(phoneNumber);
+        parcel.writeString(fullname);
+    }
 }
