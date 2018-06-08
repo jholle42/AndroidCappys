@@ -101,6 +101,8 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
                     username.setText("Welcome to the Cappy's App Guest!");
                     userEmail.setText("");
                     isThereUser = false;
+                    displayView(R.id.nav_tap_list);
+
                 }
             }
         };
