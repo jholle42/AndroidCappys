@@ -1,16 +1,25 @@
 package jackal.org.cappyapp;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.PropertyName;
 
 import org.w3c.dom.Text;
+
+import java.io.Serializable;
 
 
 /**
@@ -25,6 +34,66 @@ public class ProfilePage extends Fragment {
 
     EditText mAddress, mPhone;
     TextView mUserFullName, mUserEmail;
+
+    //DAtabase things
+    private DatabaseReference ref;
+    private FirebaseDatabase database;
+
+    User user;
+
+    public class User implements Serializable{
+
+        User (String e,String a, String p, String f){
+            this.address = a;
+            this.email = e;
+            this.fullname = f;
+            this.phoneNumber = p;
+        }
+
+        public String email;
+        public String address;
+        public String phoneNumber;
+        public String fullname;
+
+        @PropertyName("email")
+        public String getEmail(){
+            return email;
+        }
+        @PropertyName("address")
+        public String getAddress(){
+            return address;
+        }
+        @PropertyName("phone_number")
+        public String getPhoneNumber(){
+            return phoneNumber;
+        }
+        @PropertyName("fullname")
+        public String getFullname(){
+            return fullname;
+        }
+        @PropertyName("fullname")
+        public void setFullname(String f){
+            fullname = f;
+        }
+        @PropertyName("email")
+        public void setEmail(String e){
+            email = e;
+        }
+        @PropertyName("address")
+        public void setAddress(String a){
+            address = a;
+        }
+        @PropertyName("phone_number")
+        public void setPhoneNumber(String p){
+            phoneNumber = p;
+        }
+
+    }
+// ...
+
+
+    String name, email, address, phoneNumber, key;
+
 
     // TODO: Rename and change types of parameters
     AppUser userProfile;
@@ -47,10 +116,25 @@ public class ProfilePage extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userProfile = new AppUser();
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("users");
+        //mDatabase = FirebaseDatabase.getInstance().getReference();
+        address = "Please set address";
+        phoneNumber = "Please set  Phone Number";
+
         if (getArguments() != null) {
-            userProfile = getArguments().getParcelable("user");
+            name = getArguments().getString("name");
+            email = getArguments().getString("email");
+            key = getArguments().getString("key");
+            user = new User(email, address, phoneNumber, name);
         }
+        ref.child(key).setValue(user);
+
+        //mDatabase.child("users").child(key).setValue(user);
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,12 +144,12 @@ public class ProfilePage extends Fragment {
         mUserFullName = rootView.findViewById(R.id.Name);
         mUserEmail = rootView.findViewById(R.id.Email);
         mAddress = rootView.findViewById(R.id.Address);
+        mUserEmail.setText(email);
+        mUserFullName.setText(name);
 
-        mUserEmail.setText(userProfile.getEmail());
-        mUserFullName.setText(userProfile.getFullName());
-
+        mUserEmail.setText(email);
+        mUserFullName.setText(name);
         return rootView;
-
 
     }
 
@@ -75,36 +159,13 @@ public class ProfilePage extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-/*
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-*/
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void submit(){
+
     }
 }
