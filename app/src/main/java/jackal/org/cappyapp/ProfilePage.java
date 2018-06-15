@@ -41,7 +41,7 @@ public class ProfilePage extends Fragment {
 
     User user;
 
-    public class User implements Serializable{
+    public class User{
 
         User (String e,String a, String p, String f){
             this.address = a;
