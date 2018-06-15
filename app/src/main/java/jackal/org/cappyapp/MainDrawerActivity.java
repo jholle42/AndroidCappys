@@ -18,12 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.data.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -44,6 +49,10 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
     List<AuthUI.IdpConfig> providers = Arrays.asList(
             new AuthUI.IdpConfig.EmailBuilder().build());
 
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference ref = database.getReference("server/saving-data/fireblog");
+    DatabaseReference usersRef = ref.child("users");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -56,6 +65,9 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("server/saving-data/fireblog");
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame,new tapListPage());
@@ -87,7 +99,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
                     username.setText("Welcome to the Cappy's App " + fbUser.getDisplayName() + "!");
                     userEmail.setText(fbUser.getEmail());
-
 
                     System.out.println("User logged in");
                     Toast.makeText(MainDrawerActivity.this, fbUser.getDisplayName() + " has Signed In!",
@@ -171,7 +182,10 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
             case R.id.profilePage:
                 if(isThereUser) {
                     Bundle bundle = new Bundle();
-                    bundle.putParcelable("user",currentUser);
+                    bundle.putString("name", fbUser.getDisplayName());
+                    bundle.putString("email", fbUser.getEmail());
+                    bundle.putString("key", fbUser.getUid());
+                    //bundle.putParcelable("user",currentUser);
                     fragment = new ProfilePage();
                     fragment.setArguments(bundle);
                 }else{
