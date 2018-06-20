@@ -41,57 +41,6 @@ public class ProfilePage extends Fragment {
 
     User user;
 
-    public class User{
-
-        User (String e,String a, String p, String f){
-            this.address = a;
-            this.email = e;
-            this.fullname = f;
-            this.phoneNumber = p;
-        }
-
-        public String email;
-        public String address;
-        public String phoneNumber;
-        public String fullname;
-
-        @PropertyName("email")
-        public String getEmail(){
-            return email;
-        }
-        @PropertyName("address")
-        public String getAddress(){
-            return address;
-        }
-        @PropertyName("phone_number")
-        public String getPhoneNumber(){
-            return phoneNumber;
-        }
-        @PropertyName("fullname")
-        public String getFullname(){
-            return fullname;
-        }
-        @PropertyName("fullname")
-        public void setFullname(String f){
-            fullname = f;
-        }
-        @PropertyName("email")
-        public void setEmail(String e){
-            email = e;
-        }
-        @PropertyName("address")
-        public void setAddress(String a){
-            address = a;
-        }
-        @PropertyName("phone_number")
-        public void setPhoneNumber(String p){
-            phoneNumber = p;
-        }
-
-    }
-// ...
-
-
     String name, email, address, phoneNumber, key;
 
 
@@ -128,7 +77,7 @@ public class ProfilePage extends Fragment {
             key = getArguments().getString("key");
             user = new User(email, address, phoneNumber, name);
         }
-        ref.child(key).setValue(user);
+        //ref.child(key).setValue(user);
 
         //mDatabase.child("users").child(key).setValue(user);
 
@@ -140,10 +89,8 @@ public class ProfilePage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_page, container, false);
-        mPhone = rootView.findViewById(R.id.PhoneNumber);
-        mUserFullName = rootView.findViewById(R.id.Name);
-        mUserEmail = rootView.findViewById(R.id.Email);
-        mAddress = rootView.findViewById(R.id.Address);
+        mUserFullName = rootView.findViewById(R.id.name);
+        mUserEmail = rootView.findViewById(R.id.email);
         mUserEmail.setText(email);
         mUserFullName.setText(name);
 
