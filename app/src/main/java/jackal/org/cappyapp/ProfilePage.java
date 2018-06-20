@@ -6,6 +6,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import com.google.firebase.database.PropertyName;
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -34,6 +38,11 @@ public class ProfilePage extends Fragment {
 
     EditText mAddress, mPhone;
     TextView mUserFullName, mUserEmail;
+    List<hold> userHolds;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     //DAtabase things
     private DatabaseReference ref;
@@ -71,6 +80,7 @@ public class ProfilePage extends Fragment {
         address = "Please set address";
         phoneNumber = "Please set  Phone Number";
 
+
         if (getArguments() != null) {
             name = getArguments().getString("name");
             email = getArguments().getString("email");
@@ -89,13 +99,24 @@ public class ProfilePage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_page, container, false);
+        mRecyclerView = rootView.findViewById(R.id.sectionHolds);
         mUserFullName = rootView.findViewById(R.id.name);
         mUserEmail = rootView.findViewById(R.id.email);
         mUserEmail.setText(email);
         mUserFullName.setText(name);
 
+        initHolds();
+
         mUserEmail.setText(email);
         mUserFullName.setText(name);
+
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new RVAdapter(userHolds);
+        mRecyclerView.setAdapter(mAdapter);
+
         return rootView;
 
     }
@@ -114,5 +135,13 @@ public class ProfilePage extends Fragment {
 
     public void submit(){
 
+    }
+
+    public void initHolds(){
+        userHolds = new ArrayList<>();
+        userHolds.add(new hold(mUserFullName.getText().toString(),"2","GyroScope","2",true));
+        userHolds.add(new hold(mUserFullName.getText().toString(),"2","Chomolungma","1",true));
+        userHolds.add(new hold(mUserFullName.getText().toString(),"2","Knob Creek","4",true));
+        userHolds.add(new hold(mUserFullName.getText().toString(),"2","Blantons","2",true));
     }
 }

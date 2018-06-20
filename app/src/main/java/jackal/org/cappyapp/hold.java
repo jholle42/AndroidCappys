@@ -9,13 +9,21 @@ public class hold {
     public String number;
     public String itemName;
     public String quantity;
+    public Boolean approved;
 
-    public hold(String name, String number, String itemName, String quantity) {
+    public hold(String name, String number, String itemName, String quantity, Boolean approved) {
         this.name = name;
         this.number = number;
         this.itemName = itemName;
         this.quantity = quantity;
+        this.approved = approved;
     }
+
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) { this.approved = approved;}
 
     public String getName() {
         return name;

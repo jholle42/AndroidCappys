@@ -9,7 +9,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/sectionName"
             android:layout_width="match_parent"
             android:layout_height="29dp"
             tools:layout_editor_absoluteX="8dp">
@@ -19,9 +19,10 @@
                 android:layout_width="45dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
-
                 android:gravity="center_vertical"
+
                 android:text="Name: "
+                android:textColor="@color/colorPrimaryDark"
 
 
                 />
@@ -35,14 +36,16 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/emailBar"
+            android:id="@+id/sectionEmail"
             android:layout_width="match_parent"
             android:layout_height="29dp"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            tools:layout_editor_absoluteX="8dp">
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/sectionHolds"
+            app:layout_constraintTop_toBottomOf="@+id/sectionName">
 
             <TextView
                 android:id="@+id/nameEmail"
+                android:textColor="@color/colorPrimaryDark"
                 android:layout_width="45dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
@@ -59,6 +62,38 @@
                 android:gravity="center_vertical" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sectionHoldsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="29dp"
+            android:orientation="vertical"
+
+            android:background="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@+id/sectionEmail">
+
+            <TextView
+                android:id="@+id/holdTitle"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_height="29dp"
+                android:text="Requested Holds" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/sectionHolds"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@+id/sectionHoldsTitle"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+
+            android:layout_height="200dp">
+
+        </android.support.v7.widget.RecyclerView>
     </android.support.constraint.ConstraintLayout>
 
 
