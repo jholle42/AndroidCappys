@@ -72,13 +72,6 @@ public class ProfilePage extends Fragment {
                 mAdapter.notifyDataSetChanged();
             }
         }
-        /*
-        String newsAuthor = ds.child("newsAuthor").getValue(String.class);
-            String newsDate = ds.child("newsDate").getValue(String.class);
-            String newsDesc = ds.child("newsDesc").getValue(String.class);
-            String newsImageUrl = ds.child("newsImageUrl").getValue(String.class);
-            String newsTitle = ds.child("newsTitle").getValue(String.class);
-            String newsUrl = ds.child("newsUrl").getValue(String.class);*/
 
         @Override
         public void onCancelled(DatabaseError databaseError) {}
@@ -143,7 +136,16 @@ public class ProfilePage extends Fragment {
         mUserEmail.setText(email);
         mUserFullName.setText(name);
         mAddHold = rootView.findViewById(R.id.addNew);
-        mAddHold.setOnClickListener(mAddListener);
+        mAddHold.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                createNewHold();
+
+                //currentContext.startActivity(activityChangeIntent);
+
+
+            }
+        });
 
         initHolds();
 
@@ -171,13 +173,7 @@ public class ProfilePage extends Fragment {
 
     }
 
-    Button.OnClickListener mAddListener;
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -214,10 +210,21 @@ public class ProfilePage extends Fragment {
         mHoldReference.child(key).setValue(Hold);
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 101) {
+            if (resultCode == 102) {
+                hold tmp = new hold(name,data.getStringExtra("n"),data.getStringExtra("i"),data.getStringExtra("a"),2);
+                userHolds.add(tmp);
+                mAdapter.notifyDataSetChanged();
+                addHold(tmp,tmp.getItemName());
+            }
+        }
+    }
+
     public void createNewHold(){
         //hold nH = new hold();
-        Intent i = new Intent(getActivity(), addHold.class );
-        startActivity(i);
+        Intent i = new Intent(getActivity(), addNewHold.class );
+        startActivityForResult(i, 101);
         //return nH;
 
     }
