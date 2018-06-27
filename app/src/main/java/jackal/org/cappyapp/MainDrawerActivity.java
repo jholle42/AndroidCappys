@@ -71,7 +71,7 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         setSupportActionBar(toolbar);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("server/saving-data/fireblog");
+        //DatabaseReference ref = database.getReference("https://cappys-mobile-applications.firebaseio.com/");
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame,new tapListPage());
