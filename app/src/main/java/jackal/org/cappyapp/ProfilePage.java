@@ -156,8 +156,9 @@ public class ProfilePage extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new RVAdapter(userHolds);
+        mAdapter = new RVAdapter(userHolds, mHoldReference, getActivity());
         mRecyclerView.setAdapter(mAdapter);
+
 
         Button.OnClickListener mAddListener = new View.OnClickListener(){
             @Override
@@ -173,7 +174,19 @@ public class ProfilePage extends Fragment {
 
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+    @Override
+    public void onResume() {
 
+        super.onResume();
+    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -220,6 +233,8 @@ public class ProfilePage extends Fragment {
             }
         }
     }
+
+
 
     public void createNewHold(){
         //hold nH = new hold();
