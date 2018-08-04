@@ -9,6 +9,7 @@ public class hold {
     public String number;
     public String itemName;
     public String quantity;
+    public String message;
     public Integer approved;
 
     //ADD TImestamp
@@ -17,17 +18,22 @@ public class hold {
 
     }
 
-    public hold(String name, String number, String itemName, String quantity, Integer approved) {
+    public hold(String name, String number, String itemName, String quantity, String message, Integer approved) {
         this.name = name;
         this.number = number;
         this.itemName = itemName;
         this.quantity = quantity;
+        this.message = message;
         this.approved = approved;
     }
 
     public Integer getApproved() {
         return approved;
     }
+
+    public String getMessage(){ return message;}
+
+    public void setMessage(String message){ this.message = message;}
 
     public void setApproved(Integer approved) { this.approved = approved;}
 

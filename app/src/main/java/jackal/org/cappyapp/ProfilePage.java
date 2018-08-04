@@ -226,7 +226,7 @@ public class ProfilePage extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 101) {
             if (resultCode == 102) {
-                hold tmp = new hold(name,data.getStringExtra("n"),data.getStringExtra("i"),data.getStringExtra("a"),2);
+                hold tmp = new hold(name,data.getStringExtra("n"),data.getStringExtra("i"),data.getStringExtra("a"),"  ",2);
                 userHolds.add(tmp);
                 mAdapter.notifyDataSetChanged();
                 addHold(tmp,tmp.getItemName());

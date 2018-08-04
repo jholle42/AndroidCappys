@@ -12,14 +12,20 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class addNewHold extends AppCompatActivity {
 
     EditText item, amount, number;
     Button create;
+    TextView rules;
+
 
     String i,a,n;
+    final String RULES = "Put in SOME GENERIC HOLD RULES FOR USERS\n\t1) No BLANTONS EVER\n\n\t2) No more than 2 on rare beers per person\n\n\n\nYellow tag = awaiting fulfillment\nRed tag = denied hold\nGreen tag = Approved and waiting pickup";
+
+
 
 
 
@@ -31,6 +37,8 @@ public class addNewHold extends AppCompatActivity {
         item = (EditText) findViewById(R.id.itemName);
         amount = (EditText) findViewById(R.id.itemQuantity);
         number = (EditText) findViewById(R.id.phoneNumber);
+        rules = (TextView) findViewById(R.id.rules);
+        rules.setText(RULES);
 
         create = (Button) findViewById(R.id.createButton);
 
@@ -111,4 +119,6 @@ public class addNewHold extends AppCompatActivity {
             finish();
         }
     }
+
+
 }

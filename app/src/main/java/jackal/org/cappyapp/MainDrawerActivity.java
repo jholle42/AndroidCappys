@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.data.model.User;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -62,7 +63,7 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
 
         super.onCreate(savedInstanceState);
-
+        FirebaseApp.initializeApp(this);
         //Intent i = new Intent(this, LoginActivity.class);
         //startActivityForResult(i, 123);
 
