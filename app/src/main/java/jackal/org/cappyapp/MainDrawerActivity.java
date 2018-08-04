@@ -2,6 +2,7 @@ package jackal.org.cappyapp;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,11 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.data.model.User;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -44,6 +48,7 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
     FirebaseUser fbUser;
     NavigationView navigationView;
     TextView username, userEmail;
+    ImageView imageView;
 
 
     List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -58,7 +63,7 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
 
         super.onCreate(savedInstanceState);
-
+        FirebaseApp.initializeApp(this);
         //Intent i = new Intent(this, LoginActivity.class);
         //startActivityForResult(i, 123);
 
@@ -67,7 +72,7 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         setSupportActionBar(toolbar);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("server/saving-data/fireblog");
+        //DatabaseReference ref = database.getReference("https://cappys-mobile-applications.firebaseio.com/");
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame,new tapListPage());
@@ -81,7 +86,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         navigationView = findViewById(R.id.nav_view);
         username = navigationView.getHeaderView(0).findViewById(R.id.welcome_user);
         userEmail = navigationView.getHeaderView(0).findViewById(R.id.user_email);
-
         navigationView.setNavigationItemSelectedListener(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -193,15 +197,12 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.nav_main:
-                fragment = new mainPage();
-                break;
             case R.id.nav_tap_list:
                 fragment = new tapListPage();
                 break;
-            case R.id.nav_blog:
-                fragment = new blogPage();
-                break;
+           /* case R.id.nav_caphour_list:
+                fragment = new cappyHour();
+                break;*/
             case R.id.nav_events:
                 fragment = new eventPage();
                 break;

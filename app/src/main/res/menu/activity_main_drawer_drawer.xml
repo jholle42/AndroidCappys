@@ -2,28 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
+        <item android:title="Profile"
+                    android:id="@+id/profilePage"
+                    android:icon="@drawable/profile">
+        </item>
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/profilePage"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Profile" />
-        <item
-            android:id="@+id/nav_main"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Main Page" />
-        <item
-            android:id="@+id/nav_tap_list"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Tap List" />
-        <item
-            android:id="@+id/nav_blog"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Blog" />
-        <item
-            android:id="@+id/nav_events"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Events" />
+        <item android:title="What's Cappenin?">
+            <menu>
+                <item
+                    android:id="@+id/nav_tap_list"
+                    android:icon="@drawable/glass"
+                    android:title="Tap List" />
+                <item
+                    android:id="@+id/nav_events"
+                    android:icon="@drawable/event"
+                    android:title="Events" />
+            </menu>
+        </item>
 
     </group>
 

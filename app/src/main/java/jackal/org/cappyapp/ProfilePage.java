@@ -3,23 +3,35 @@ package jackal.org.cappyapp;
 import android.app.Application;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.PropertyName;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -34,63 +46,39 @@ public class ProfilePage extends Fragment {
 
     EditText mAddress, mPhone;
     TextView mUserFullName, mUserEmail;
+    List<hold> userHolds;
+    Button mAddHold;
 
-    //DAtabase things
-    private DatabaseReference ref;
-    private FirebaseDatabase database;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+   //database
+   FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+   DatabaseReference mHoldReference;
+
+
+    ValueEventListener eventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                hold h = new hold();
+                h.setApproved(postSnapshot.child("approved").getValue(Integer.class));
+                h.setItemName(postSnapshot.child("itemName").getValue(String.class));
+                h.setName(postSnapshot.child("name").getValue(String.class));
+                h.setNumber(postSnapshot.child("number").getValue(String.class));
+                h.setQuantity(postSnapshot.child("quantity").getValue(String.class));
+                userHolds.add(h);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {}
+    };
+
 
     User user;
-
-    public class User{
-
-        User (String e,String a, String p, String f){
-            this.address = a;
-            this.email = e;
-            this.fullname = f;
-            this.phoneNumber = p;
-        }
-
-        public String email;
-        public String address;
-        public String phoneNumber;
-        public String fullname;
-
-        @PropertyName("email")
-        public String getEmail(){
-            return email;
-        }
-        @PropertyName("address")
-        public String getAddress(){
-            return address;
-        }
-        @PropertyName("phone_number")
-        public String getPhoneNumber(){
-            return phoneNumber;
-        }
-        @PropertyName("fullname")
-        public String getFullname(){
-            return fullname;
-        }
-        @PropertyName("fullname")
-        public void setFullname(String f){
-            fullname = f;
-        }
-        @PropertyName("email")
-        public void setEmail(String e){
-            email = e;
-        }
-        @PropertyName("address")
-        public void setAddress(String a){
-            address = a;
-        }
-        @PropertyName("phone_number")
-        public void setPhoneNumber(String p){
-            phoneNumber = p;
-        }
-
-    }
-// ...
-
 
     String name, email, address, phoneNumber, key;
 
@@ -116,11 +104,10 @@ public class ProfilePage extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userProfile = new AppUser();
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("users");
-        //mDatabase = FirebaseDatabase.getInstance().getReference();
         address = "Please set address";
         phoneNumber = "Please set  Phone Number";
+
+
 
         if (getArguments() != null) {
             name = getArguments().getString("name");
@@ -128,11 +115,14 @@ public class ProfilePage extends Fragment {
             key = getArguments().getString("key");
             user = new User(email, address, phoneNumber, name);
         }
-        ref.child(key).setValue(user);
 
-        //mDatabase.child("users").child(key).setValue(user);
+        mHoldReference = mFirebaseDatabase.getReference("holds/"+ key);
+
+        mHoldReference.addListenerForSingleValueEvent(eventListener);
+
 
     }
+
 
 
 
@@ -140,24 +130,62 @@ public class ProfilePage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_page, container, false);
-        mPhone = rootView.findViewById(R.id.PhoneNumber);
-        mUserFullName = rootView.findViewById(R.id.Name);
-        mUserEmail = rootView.findViewById(R.id.Email);
-        mAddress = rootView.findViewById(R.id.Address);
+        mRecyclerView = rootView.findViewById(R.id.sectionHolds);
+        mUserFullName = rootView.findViewById(R.id.name);
+        mUserEmail = rootView.findViewById(R.id.email);
         mUserEmail.setText(email);
         mUserFullName.setText(name);
+        mAddHold = rootView.findViewById(R.id.addNew);
+        mAddHold.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                createNewHold();
+
+                //currentContext.startActivity(activityChangeIntent);
+
+
+            }
+        });
+
+        initHolds();
 
         mUserEmail.setText(email);
         mUserFullName.setText(name);
+
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new RVAdapter(userHolds, mHoldReference, getActivity());
+        mRecyclerView.setAdapter(mAdapter);
+
+
+        Button.OnClickListener mAddListener = new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                createNewHold();
+            }
+        };
+
+
+
         return rootView;
+
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+    @Override
+    public void onResume() {
+
+        super.onResume();
     }
 
     public interface OnFragmentInteractionListener {
@@ -168,4 +196,54 @@ public class ProfilePage extends Fragment {
     public void submit(){
 
     }
+
+// Attach a listener to read the data at our posts reference
+
+
+    public void initHolds(){
+        userHolds = new ArrayList<>();
+
+        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","GyroScope","2",1));
+        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","Chomolungma","1",2));
+        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","Knob Creek","4",3));
+        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","Blantons","2",2));
+        if(userHolds.isEmpty()){
+
+        }else{
+            for(hold h:userHolds){
+                addHold(h,h.getItemName());
+            }
+        }
+
+
+    }
+
+    public void addHold(final hold Hold, String key) {
+        final DatabaseReference itemLocation = mHoldReference.push();
+        mHoldReference.child(key).setValue(Hold);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 101) {
+            if (resultCode == 102) {
+                hold tmp = new hold(name,data.getStringExtra("n"),data.getStringExtra("i"),data.getStringExtra("a"),"  ",2);
+                userHolds.add(tmp);
+                mAdapter.notifyDataSetChanged();
+                addHold(tmp,tmp.getItemName());
+            }
+        }
+    }
+
+
+
+    public void createNewHold(){
+        //hold nH = new hold();
+        Intent i = new Intent(getActivity(), addNewHold.class );
+        startActivityForResult(i, 101);
+        //return nH;
+
+    }
+
+
+
 }
