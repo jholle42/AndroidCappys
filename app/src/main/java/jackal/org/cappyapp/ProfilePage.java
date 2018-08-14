@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class ProfilePage extends Fragment {
    //database
    FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
    DatabaseReference mHoldReference;
+   DatabaseReference mAdminHoldReference;
 
 
     ValueEventListener eventListener = new ValueEventListener() {
@@ -68,6 +70,8 @@ public class ProfilePage extends Fragment {
                 h.setName(postSnapshot.child("name").getValue(String.class));
                 h.setNumber(postSnapshot.child("number").getValue(String.class));
                 h.setQuantity(postSnapshot.child("quantity").getValue(String.class));
+                h.setUid(postSnapshot.child("uid").getValue(String.class));
+                h.setMessage(postSnapshot.child("Message").getValue(String.class));
                 userHolds.add(h);
                 mAdapter.notifyDataSetChanged();
             }
@@ -77,14 +81,7 @@ public class ProfilePage extends Fragment {
         public void onCancelled(DatabaseError databaseError) {}
     };
 
-
-    User user;
-
     String name, email, address, phoneNumber, key;
-
-
-    // TODO: Rename and change types of parameters
-    AppUser userProfile;
 
     private OnFragmentInteractionListener mListener;
 
@@ -93,7 +90,7 @@ public class ProfilePage extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ProfilePage newInstance(AppUser givenUser) {
+    public static ProfilePage newInstance() {
         ProfilePage fragment = new ProfilePage();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -103,7 +100,6 @@ public class ProfilePage extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userProfile = new AppUser();
         address = "Please set address";
         phoneNumber = "Please set  Phone Number";
 
@@ -113,11 +109,10 @@ public class ProfilePage extends Fragment {
             name = getArguments().getString("name");
             email = getArguments().getString("email");
             key = getArguments().getString("key");
-            user = new User(email, address, phoneNumber, name);
         }
 
         mHoldReference = mFirebaseDatabase.getReference("holds/"+ key);
-
+        mAdminHoldReference = mFirebaseDatabase.getReference("adminHolds");
         mHoldReference.addListenerForSingleValueEvent(eventListener);
 
 
@@ -140,10 +135,6 @@ public class ProfilePage extends Fragment {
             public void onClick(View v) {
                 // Perform action on click
                 createNewHold();
-
-                //currentContext.startActivity(activityChangeIntent);
-
-
             }
         });
 
@@ -156,7 +147,7 @@ public class ProfilePage extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new RVAdapter(userHolds, mHoldReference, getActivity());
+        mAdapter = new RVAdapter(userHolds, mHoldReference,mAdminHoldReference, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -202,34 +193,30 @@ public class ProfilePage extends Fragment {
 
     public void initHolds(){
         userHolds = new ArrayList<>();
-
-        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","GyroScope","2",1));
-        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","Chomolungma","1",2));
-        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","Knob Creek","4",3));
-        //userHolds.add(new hold(mUserFullName.getText().toString(),"513-------","Blantons","2",2));
         if(userHolds.isEmpty()){
 
         }else{
             for(hold h:userHolds){
-                addHold(h,h.getItemName());
+                addHold(h,h.getItemName(),h.getUid());
             }
         }
 
 
     }
 
-    public void addHold(final hold Hold, String key) {
+    public void addHold(final hold Hold, String key, String aKey) {
         final DatabaseReference itemLocation = mHoldReference.push();
         mHoldReference.child(key).setValue(Hold);
+        mAdminHoldReference.child(aKey).setValue(Hold);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 101) {
             if (resultCode == 102) {
-                hold tmp = new hold(name,data.getStringExtra("n"),data.getStringExtra("i"),data.getStringExtra("a"),"  ",2);
+                hold tmp = new hold(name,data.getStringExtra("n"),data.getStringExtra("i"),data.getStringExtra("a"),"Awaiting Approval...",2,mAdminHoldReference.push().getKey());
                 userHolds.add(tmp);
                 mAdapter.notifyDataSetChanged();
-                addHold(tmp,tmp.getItemName());
+                addHold(tmp,tmp.getItemName(),tmp.getUid());
             }
         }
     }
@@ -243,6 +230,7 @@ public class ProfilePage extends Fragment {
         //return nH;
 
     }
+
 
 
 

@@ -2,10 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-        <item android:title="Profile"
-                    android:id="@+id/profilePage"
-                    android:icon="@drawable/profile">
-        </item>
+
     <group android:checkableBehavior="single">
         <item android:title="What's Cappenin?">
             <menu>

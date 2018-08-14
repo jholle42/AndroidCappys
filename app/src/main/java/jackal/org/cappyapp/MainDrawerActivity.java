@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -39,12 +40,11 @@ import static java.lang.Boolean.TRUE;
 
 public class MainDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    firebaseDatabaseInteractor dbInteractor;
+
     Boolean isThereUser = FALSE;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final int RC_SIGN_IN = 123;
-    AppUser currentUser = new AppUser();
     FirebaseUser fbUser;
     NavigationView navigationView;
     TextView username, userEmail;
@@ -64,8 +64,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
-        //Intent i = new Intent(this, LoginActivity.class);
-        //startActivityForResult(i, 123);
 
         setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -98,8 +96,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
                     fbUser = mAuth.getCurrentUser();
                     String tmpname = fbUser.getDisplayName();
                     String tmpemail = fbUser.getEmail();
-
-                    setUser(tmpname,tmpemail);
 
                     username.setText("Welcome to the Cappy's App " + fbUser.getDisplayName() + "!");
                     userEmail.setText(fbUser.getEmail());
@@ -142,25 +138,46 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_drawer, menu);
+        menu.getItem(0).setEnabled(isThereUser);
+        menu.getItem(1).setEnabled(!isThereUser);
+        menu.getItem(2).setEnabled(isThereUser);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        menu.getItem(0).setEnabled(isThereUser);
+        menu.getItem(1).setEnabled(!isThereUser);
+        menu.getItem(2).setEnabled(isThereUser);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Fragment fragment = null;
+
 
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.profilePage) {
+            if(isThereUser) {
+                Bundle bundle = new Bundle();
+                bundle.putString("name", fbUser.getDisplayName());
+                bundle.putString("email", fbUser.getEmail());
+                bundle.putString("key", fbUser.getUid());
+                //bundle.putParcelable("user",currentUser);
+                fragment = new ProfilePage();
+                fragment.setArguments(bundle);
+            }else{
+                Toast.makeText(MainDrawerActivity.this,"Please Sign in to View Profile.",
+                        Toast.LENGTH_SHORT).show();
+            }
         }
         if (id == R.id.sign_in) {
 
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),RC_SIGN_IN);
             fbUser = FirebaseAuth.getInstance().getCurrentUser();
             fbUser = mAuth.getCurrentUser();
-             if(fbUser!= null) {
-                 setUser(fbUser.getDisplayName(),fbUser.getEmail());
-             }
             return true;
         }
 
@@ -168,6 +185,12 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
             FirebaseAuth.getInstance().signOut();
             AuthUI.getInstance().signOut(this);
             return true;
+        }
+
+        if (fragment != null) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
         }
 
         return super.onOptionsItemSelected(item);
@@ -183,20 +206,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         Fragment fragment = null;
 
         switch (viewId) {
-            case R.id.profilePage:
-                if(isThereUser) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", fbUser.getDisplayName());
-                    bundle.putString("email", fbUser.getEmail());
-                    bundle.putString("key", fbUser.getUid());
-                    //bundle.putParcelable("user",currentUser);
-                    fragment = new ProfilePage();
-                    fragment.setArguments(bundle);
-                }else{
-                    Toast.makeText(MainDrawerActivity.this,"Please Sign in to View Profile.",
-                            Toast.LENGTH_SHORT).show();
-                }
-                break;
             case R.id.nav_tap_list:
                 fragment = new tapListPage();
                 break;
@@ -230,13 +239,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
     public boolean isSignedIn(){
         return isThereUser;
-    }
-
-    public void setUser(String name, String email){
-        currentUser.setFullName(name);
-        currentUser.setEmail(email);
-        //currentUser.setAddress("Please Set Address.");
-        //currentUser.setPhoneNumber("Please Set Phone Numer");
     }
 
 }
