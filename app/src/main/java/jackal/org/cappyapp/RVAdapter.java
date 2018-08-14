@@ -32,21 +32,16 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.holdViewHolder>{
     Context c;
 
     DatabaseReference mHoldReference;
+    DatabaseReference mAdminReference;
 
 
-    RVAdapter(List<hold> holds, DatabaseReference ref, Context c){
+    RVAdapter(List<hold> holds, DatabaseReference uref, DatabaseReference aref, Context c){
         this.holds = holds;
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        this.mHoldReference = ref;
+        this.mHoldReference = uref;
+        this.mAdminReference = aref;
         this.c = c;
     }
-
-
-
-
-
-
-
 
     public static class holdViewHolder extends RecyclerView.ViewHolder {
         RecyclerView rv;
@@ -134,6 +129,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.holdViewHolder>{
 
     public void deleteHold(hold h){
         mHoldReference.child(h.getItemName()).removeValue();
+        mAdminReference.child(h.getUid()).removeValue();
     }
 
 /*
