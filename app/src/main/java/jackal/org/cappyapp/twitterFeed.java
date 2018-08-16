@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.net.URL;
-
 public class twitterFeed extends Fragment {
 
     WebView mWebView;
@@ -22,7 +20,7 @@ public class twitterFeed extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_twitter_feed, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_twitter, container, false);
         mWebView = rootView.findViewById(R.id.webview_twitter_feed);
         mWebView.loadUrl(mainURL);
         mWebView.getSettings().setJavaScriptEnabled(true);

@@ -147,7 +147,7 @@ public class ProfilePage extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new RVAdapter(userHolds, mHoldReference,mAdminHoldReference, getActivity());
+        mAdapter = new holdAdapter(userHolds, mHoldReference,mAdminHoldReference, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
 

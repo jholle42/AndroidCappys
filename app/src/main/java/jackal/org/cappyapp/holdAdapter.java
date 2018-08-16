@@ -24,7 +24,7 @@ import static jackal.org.cappyapp.R.color.colorYellow;
  * Created by jholle42 on 6/20/18.
  */
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.holdViewHolder>{
+public class holdAdapter extends RecyclerView.Adapter<holdAdapter.holdViewHolder>{
 
     List<hold> holds;
     FirebaseDatabase mFirebaseDatabase;
@@ -35,7 +35,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.holdViewHolder>{
     DatabaseReference mAdminReference;
 
 
-    RVAdapter(List<hold> holds, DatabaseReference uref, DatabaseReference aref, Context c){
+    holdAdapter(List<hold> holds, DatabaseReference uref, DatabaseReference aref, Context c){
         this.holds = holds;
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         this.mHoldReference = uref;

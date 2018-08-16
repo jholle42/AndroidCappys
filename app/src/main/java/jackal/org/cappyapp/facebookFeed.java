@@ -20,7 +20,7 @@ public class facebookFeed extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_facebook_feed, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_facebook, container, false);
         mWebView = rootView.findViewById(R.id.webview_facebook_feed);
         mWebView.loadUrl(mainURL);
         mWebView.getSettings().setJavaScriptEnabled(true);

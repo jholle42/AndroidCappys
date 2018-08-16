@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="jackal.org.cappyapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,6 +32,7 @@
             android:name=".addNewHold"
             android:label="@string/title_activity_add_new_hold"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" tools:replace="android:value"/>
     </application>
 
 </manifest>
