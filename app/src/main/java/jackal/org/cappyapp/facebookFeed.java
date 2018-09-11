@@ -2,6 +2,9 @@ package jackal.org.cappyapp;
 
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,8 +33,18 @@ public class facebookFeed extends Fragment {
                 return false;
             }
         });
+        startActivity(getOpenFacebookIntent(getActivity()));
         // Inflate the layout for this fragment
         return rootView;// Inflate the layout for this fragment
+    }
+
+    public static Intent getOpenFacebookIntent(Context context) {
+        try {
+            context.getPackageManager().getPackageInfo("com.facebook.katana", 0);
+            return new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/431259720256588"));
+        } catch (Exception e) {
+            return new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.facebook.com/LovelandCappys"));
+        }
     }
 
 }

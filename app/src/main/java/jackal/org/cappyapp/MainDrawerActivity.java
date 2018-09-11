@@ -1,6 +1,9 @@
 package jackal.org.cappyapp;
 
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -55,8 +58,6 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
     FirebaseUser fbUser;
     NavigationView navigationView;
     TextView username, userEmail;
-    ImageView imageView;
-
 
     List<AuthUI.IdpConfig> providers = Arrays.asList(
             new AuthUI.IdpConfig.EmailBuilder().build());
@@ -67,10 +68,7 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
-
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "jackal.org.cappyapp",
@@ -225,27 +223,39 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
+
     public void displayView(int viewId) {
         Fragment fragment = null;
+        AlertDialog.Builder builder;
 
         switch (viewId) {
             case R.id.nav_tap_list:
                 fragment = new tapListPage();
                 break;
-           /* case R.id.nav_caphour_list:
-                fragment = new cappyHour();
-                break;*/
             case R.id.nav_events:
                 fragment = new eventPage();
                 break;
+            /*case R.id.smWebsite:
+                builder = new AlertDialog.Builder(this);
+                builder.setMessage("Continue to Cappys Website?").setPositiveButton("Yes",webDialogClickListener).setNegativeButton("No",webDialogClickListener).show();
+                break;*/
             case R.id.smTwitter:
-                fragment = new twitterFeed();
+                builder = new AlertDialog.Builder(this);
+                builder.setMessage("Continue to Twitter?").setPositiveButton("Mobile App", twitDCL)
+                        .setNegativeButton("Website", twitDCL).show();
                 break;
             case R.id.smFacebook:
-                fragment = new facebookFeed();
+                builder = new AlertDialog.Builder(this);
+                builder.setMessage("Continue to Facebook?").setPositiveButton("Mobile App", fbDCL)
+                        .setNegativeButton("Website", fbDCL).show();
                 break;
             case R.id.smInstagram:
-                fragment = new instagramFeed();
+                builder = new AlertDialog.Builder(this);
+                builder.setMessage("Continue to Instagram?").setPositiveButton("Mobile App", instaDCL)
+                        .setNegativeButton("Website", instaDCL).show();
+                break;
+            case R.id.auGeneral:
+                fragment = new genInformation();
                 break;
         }
 
@@ -264,6 +274,103 @@ public class MainDrawerActivity extends AppCompatActivity implements NavigationV
         return isThereUser;
     }
 
+    DialogInterface.OnClickListener twitDCL = new DialogInterface.OnClickListener() {
+        Intent i;
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    try {
+                        getPackageManager().getPackageInfo("twitter://user?user_id=1543988708", 0);
+                        i = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("twitter://user?screen_name=CappysWineandSpirits"));
+                        startActivity(i);
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Twitter is not installed on this device, please try again and select 'Website'.", Toast.LENGTH_LONG).show();
+                    }
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://twitter.com/LovelandCappys")));
+                    break;
+            }
+        }
+
+
+    };
+
+    DialogInterface.OnClickListener fbDCL = new DialogInterface.OnClickListener() {
+        Intent i;
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    try {
+                        getPackageManager().getPackageInfo("com.facebook.katana", 0);
+                        i = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/431259720256588"));
+                        startActivity(i);
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Facebook is not installed on this device, please try again and select 'Website'.", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/LovelandCappys"));
+                    startActivity(i);
+                    break;
+            }
+        }
+
+
+    };
+    DialogInterface.OnClickListener webDCL = new DialogInterface.OnClickListener() {
+        Intent i;
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://lovelandcappys.com/"));
+                    startActivity(i);
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        }
+
+
+    };
+    DialogInterface.OnClickListener instaDCL = new DialogInterface.OnClickListener() {
+        Intent i;
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    try {
+                        getPackageManager().getPackageInfo("com.instagram.android", 0);
+                        i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://instagram.com/_u/cappyswineandspirits"));
+                        startActivity(i);
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Instagram is not installed on this device, please try again and select 'Website'.", Toast.LENGTH_LONG).show();
+                    }
+                    startActivity(i);
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://www.instagram.com/cappyswineandspirits/")));
+                    break;
+            }
+        }
+
+
+    };
+
+
 }
-
-

@@ -16,9 +16,6 @@
                     android:title="Events" />
             </menu>
         </item>
-
-    </group>
-
     <item android:title="Social Media">
         <menu>
             <item
@@ -36,5 +33,15 @@
 
         </menu>
     </item>
+    <item android:title="About Us">
+        <menu>
+            <item
+                android:id="@+id/auGeneral"
+                android:icon="@drawable/aboutus"
+                android:title="General Information"
+                />
+        </menu>
+        </item>
+    </group>
 
 </menu>
